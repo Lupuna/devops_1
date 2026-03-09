@@ -1,0 +1,11 @@
+groups:
+  - name: example
+    rules:
+      - alert: AppDown
+        expr: container_last_seen{name="app"} < time() - 60
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container {{ $labels.name }} is down"
+          description: "Container {{ $labels.name }} has not been seen by cAdvisor for more than 3 minutes."
