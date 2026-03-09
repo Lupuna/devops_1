@@ -60,15 +60,24 @@ services:
 
   alertmanager:
     image: prom/alertmanager:latest
-    restart: unless-stopped
+    env_file:
+      - .env
     ports:
       - "${ALERTMANAGER_PORT}:9093"
     volumes:
-      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ./alertmanager.yml.tmpl:/etc/alertmanager/alertmanager.yml.tmpl
       - ./templates/:/etc/alertmanager/templates
       - alertmanager-data:/data
+    entrypoint: /bin/sh
     command:
-      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - -c
+      - |
+        cat /etc/alertmanager/alertmanager.yml.tmpl | \
+        sed "s|\$${TELEGRAM_BOT_TOKEN}|$$TELEGRAM_BOT_TOKEN|g" | \
+        sed "s|\$${TELEGRAM_CHAT_ID}|$$TELEGRAM_CHAT_ID|g" \
+        > /tmp/alertmanager.yml && \
+        /bin/alertmanager \
+        --config.file=/tmp/alertmanager.yml
 
 volumes:
   db_data:

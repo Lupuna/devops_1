@@ -1,11 +1,22 @@
 groups:
   - name: example
     rules:
-      - alert: AppDown
-        expr: container_last_seen{name="app"} < time() - 60
+      - alert: AppDownWithUp
+        expr: up{job="gin-backend-starter"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Job {{ $labels.job }} down"
+          description: "Job {{ $labels.job }} has been down for more than 30 seconds."
+
+    # Если не модифицировать код приложения, то только так
+
+      - alert: AppDownWithCadvisor
+        expr: max(container_last_seen{name="app"}) < time() - 60
         for: 1m
         labels:
           severity: critical
         annotations:
           summary: "Container {{ $labels.name }} is down"
-          description: "Container {{ $labels.name }} has not been seen by cAdvisor for more than 3 minutes."
+          description: "Container {{ $labels.name }} has not been seen by cAdvisor for more than 2 minutes."
