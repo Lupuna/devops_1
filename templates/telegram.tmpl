@@ -1,0 +1,7 @@
+{{ define "telegram.default" }}
+<b>{{ if eq .Status "firing" }}⚠️ Возникла проблема⚠️{{ else }}✅ Проблема решена ✅{{ end }}</b>
+
+<b>Событие:</b> {{ .CommonLabels.alertname }}
+<b>Описание:</b> {{ (index .Alerts 0).Annotations.description }}
+<b>Критичность:</b> {{ .CommonLabels.severity }}
+{{ end }}
