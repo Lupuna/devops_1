@@ -13,8 +13,8 @@ route:
 receivers:
   - name: telegram
     telegram_configs:
-      - bot_token: 'SECRET'
-        chat_id: -1003776336068
+      - bot_token: '${TELEGRAM_BOT_TOKEN}'
+        chat_id: ${TELEGRAM_CHAT_ID}
         parse_mode: HTML
         send_resolved: true
         message: '{{ template "telegram.default" . }}'
